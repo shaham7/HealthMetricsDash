@@ -164,7 +164,7 @@ options = st.sidebar.radio(
 # Sidebar filters
 st.sidebar.title("Dashboard Filters")
 
-select_all = st.sidebar.checkbox("Select All Countries", value=True)
+select_all = st.sidebar.checkbox("Select All Countries", value=False)
 
 default_countries = ['United Kingdom', 'Japan', 'Denmark', 'Australia', 'India', 'Germany', 'China', 'Brazil', 'Spain', 'Argentina']
 available_countries = merged_data['Country Name'].unique()

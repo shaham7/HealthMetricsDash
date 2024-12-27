@@ -137,7 +137,7 @@ def top10_health_expenditure(data):
     spending_data = spending_data.sort_values(by='Current Health Expenditure', ascending=False)
 
     fig = px.bar(
-        spending_data,
+        spending_data.head(10),
         x='Country Name', y='Current Health Expenditure',
         color='OOP Expenditure',
         title="Top 10 Countries by Per Capita Health Expenditure",

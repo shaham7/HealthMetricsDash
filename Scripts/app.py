@@ -100,14 +100,24 @@ def over_time_line_chart(data):
     fig.update_traces(mode='lines+markers')
     fig.update_layout(height=600, width=900)
     st.plotly_chart(fig, use_container_width=True)
-
-def top10_public_health_spending(data=merged_data):
-    spending_data = data.groupby(['Country Name'])['Health Expenditure (% GDP)'].mean().reset_index()
+    if y_axis_metric == 'OOP Expenditure':
+        st.markdown("""
+                **Note:**  
+                - **OOP (Out-of-Pocket Expenditure):** The direct payments made by individuals to healthcare providers.
+                """)
+    elif y_axis_metric == 'Current Health Expenditure':
+        st.markdown("""
+                **Note:**  
+                - **Current Health Expenditure:** Total health expenditure including OOP and government contributions as a share of GDP.  
+                """)
+        
+def top10_public_health_spending(data=merged_data):   
+    spending_data = data.groupby(['Country Name'])[['Health Expenditure (% GDP)', 'Current Health Expenditure']].mean().reset_index()
     spending_data = spending_data.sort_values(by='Health Expenditure (% GDP)', ascending=False)
     fig = px.bar(
         spending_data.head(10),
         x='Country Name', y='Health Expenditure (% GDP)',
-        color='Health Expenditure (% GDP)',
+        color='Current Health Expenditure',
         title='Top 10 Countries Spending the Most on Public Health as % of GDP',
         labels={'Health Expenditure (% GDP)': 'Average Public Health Expenditure (% GDP)'},
         template='plotly_white',
@@ -117,18 +127,19 @@ def top10_public_health_spending(data=merged_data):
         width=900,
         xaxis_title="Country",
         yaxis_title="Health Expenditure (% GDP)",
-        coloraxis_colorbar=dict(title="Health Expenditure (% GDP)"),
+        coloraxis_colorbar=dict(title="Current Health Expenditure"),
     )
     return fig
 
 def top10_health_expenditure(data):
-    spending_data = data.groupby('Country Name')['Current Health Expenditure'].mean().reset_index()
-    spending_data = spending_data.sort_values(by='Current Health Expenditure', ascending=False).head(10)
+
+    spending_data = data.groupby(['Country Name'])[['Current Health Expenditure', 'OOP Expenditure']].mean().reset_index()
+    spending_data = spending_data.sort_values(by='Current Health Expenditure', ascending=False)
 
     fig = px.bar(
         spending_data,
         x='Country Name', y='Current Health Expenditure',
-        color='Current Health Expenditure',
+        color='OOP Expenditure',
         title="Top 10 Countries by Per Capita Health Expenditure",
         labels={'Current Health Expenditure': 'Health Expenditure ($ PPP adjusted)'},
         template='plotly_white',
@@ -139,10 +150,16 @@ def top10_health_expenditure(data):
         width=900,
         xaxis_title="Country",
         yaxis_title="Health Expenditure",
-        coloraxis_colorbar=dict(title="Current Health Expenditure"),
+        coloraxis_colorbar=dict(title="OOP Expenditure"),
     )
     return fig
 
+def markdowns():
+    st.markdown("""
+                **Note:**  
+                - **OOP (Out-of-Pocket Expenditure):** The direct payments made by individuals to healthcare providers.  
+                - **Current Health Expenditure:** Total health expenditure including OOP and government contributions as a share of GDP.  
+                """)
 
 # Streamlit App Layout
 st.title("Public Health and Happiness Dashboard")
@@ -208,11 +225,7 @@ elif options == "Happiness vs Life Expectancy":
 
 elif options == "OOP Expenditure vs Current Health Expenditure":
     st.plotly_chart(OOPEvsCHE_plotly(filtered_data), use_container_width=True)
-    st.markdown("""
-                **Note:**  
-                - **OOP (Out-of-Pocket Expenditure):** The direct payments made by individuals to healthcare providers.  
-                - **Current Health Expenditure:** Total health expenditure including OOP and government contributions as a share of GDP.  
-                """)
+    markdowns()
 
 elif options == "Life Expectancy vs Health Expenditure and Happiness":
     st.plotly_chart(HvsLEvsHE_plotly(filtered_data), use_container_width=True)
@@ -222,9 +235,11 @@ elif options == "Over Time Line Chart":
 
 elif options == "Top 10 Countries by Public Health Expenditure as % of GDP":
     st.plotly_chart(top10_public_health_spending(merged_data), use_container_width=True)
+    markdowns()
 
 elif options == "Top 10 Countries by Per Capita Health Expenditure":
     st.plotly_chart(top10_health_expenditure(merged_data), use_container_width=True)
+    markdowns()
 
 st.sidebar.info(
     """
@@ -233,3 +248,4 @@ st.sidebar.info(
     """
 )
 st.sidebar.download_button(label="Download Filtered Data", data=filtered_data.to_csv(index=False), file_name='filtered_data.csv', mime='text/csv',)
+

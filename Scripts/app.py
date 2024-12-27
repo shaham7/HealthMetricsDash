@@ -111,8 +111,13 @@ def top10_public_health_spending(data=merged_data):
         title='Top 10 Countries Spending the Most on Public Health as % of GDP',
         labels={'Health Expenditure (% GDP)': 'Average Public Health Expenditure (% GDP)'},
         template='plotly_white',
+    )
+    fig.update_layout(
         height=600,
         width=900,
+        xaxis_title="Country",
+        yaxis_title="Health Expenditure (% GDP)",
+        coloraxis_colorbar=dict(title="Health Expenditure (% GDP)"),
     )
     return fig
 
@@ -120,7 +125,6 @@ def top10_health_expenditure(data):
     spending_data = data.groupby('Country Name')['Current Health Expenditure'].mean().reset_index()
     spending_data = spending_data.sort_values(by='Current Health Expenditure', ascending=False).head(10)
 
-    # Create the bar plot
     fig = px.bar(
         spending_data,
         x='Country Name', y='Current Health Expenditure',
@@ -130,14 +134,12 @@ def top10_health_expenditure(data):
         template='plotly_white',
         color_continuous_scale='Reds',
     )
-
-    # Customize layout
     fig.update_layout(
         height=600,
         width=900,
         xaxis_title="Country",
         yaxis_title="Health Expenditure",
-        coloraxis_colorbar=dict(title="OOP Expenditure"),
+        coloraxis_colorbar=dict(title="Current Health Expenditure"),
     )
     return fig
 

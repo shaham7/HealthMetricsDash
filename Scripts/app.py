@@ -162,7 +162,7 @@ def markdowns():
                 """)
 
 # Streamlit App Layout
-st.title("Public Health and Happiness Dashboard")
+st.title("𝗧𝗵𝗲 𝗛𝗲𝗮𝗹𝘁𝗵 𝗠𝗲𝘁𝗿𝗶𝗰𝘀 𝗗𝗮𝘀𝗵𝗯𝗼𝗮𝗿𝗱")
 
 # sidebar option selection
 st.sidebar.title("Dashboard Navigation")
